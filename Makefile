@@ -7,13 +7,17 @@ GOFLAGS := -v
 # This should be disabled if the binary uses pprof
 LDFLAGS := -s -w
 
+# Determine the version from git tags (falls back to "dev" if not in a tag)
+VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
+VERSION_LDFLAG := -X github.com/projectdiscovery/vulnx/v2/cmd/vulnx/clis.Version=$(VERSION)
+
 ifneq ($(shell go env GOOS),darwin)
 LDFLAGS := -extldflags "-static"
 endif
 
 all: build
 build:
-	$(GOBUILD) $(GOFLAGS) -ldflags '$(LDFLAGS)' -o "vulnx" cmd/vulnx/main.go
+	$(GOBUILD) $(GOFLAGS) -ldflags '$(LDFLAGS) $(VERSION_LDFLAG)' -o "vulnx" cmd/vulnx/main.go
 integration:
 	cd cmd/integration-test; bash run.sh
 tidy:
