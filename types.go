@@ -19,14 +19,14 @@ type Vulnerability struct {
 	CvssScore        float64    `json:"cvss_score,omitempty"`
 	EpssPercentile   float64    `json:"epss_percentile,omitempty"`
 	EpssScore        float64    `json:"epss_score,omitempty"`
-	IsAuth           bool       `json:"is_auth,omitempty"`
-	IsKev            bool       `json:"is_kev,omitempty"`
-	IsOss            bool       `json:"is_oss,omitempty"`
-	IsPatchAvailable bool       `json:"is_patch_available,omitempty"`
-	IsPoc            bool       `json:"is_poc,omitempty"`
-	IsRemote         bool       `json:"is_remote,omitempty"`
-	IsTemplate       bool       `json:"is_template,omitempty"`
-	IsVkev           bool       `json:"is_vkev,omitempty"`
+	IsAuth           bool       `json:"is_auth"`
+	IsKev            bool       `json:"is_kev"`
+	IsOss            bool       `json:"is_oss"`
+	IsPatchAvailable bool       `json:"is_patch_available"`
+	IsPoc            bool       `json:"is_poc"`
+	IsRemote         bool       `json:"is_remote"`
+	IsTemplate       bool       `json:"is_template"`
+	IsVkev           bool       `json:"is_vkev"`
 	Kev              []*KevInfo `json:"kev,omitempty"`
 	PocCount         int        `json:"poc_count,omitempty"`
 	PocFirstSeen     *time.Time `json:"poc_first_seen,omitempty"`
