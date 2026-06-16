@@ -12,7 +12,7 @@ VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 VERSION_LDFLAG := -X github.com/projectdiscovery/vulnx/v2/cmd/vulnx/clis.Version=$(VERSION)
 
 ifneq ($(shell go env GOOS),darwin)
-LDFLAGS := -extldflags "-static"
+LDFLAGS += -extldflags "-static"
 endif
 
 all: build
