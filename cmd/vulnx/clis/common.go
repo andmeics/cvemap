@@ -274,7 +274,7 @@ func ensureVulnxClientInitialized(_ *cobra.Command) error {
 				if err == nil {
 					var sb strings.Builder
 					sb.WriteString("--- HTTP REQUEST ---\n")
-					sb.Write(dump)
+					sb.WriteString(redactSensitiveHeaders(dump))
 					sb.WriteString("--------------------\n")
 					gologger.Debug().MsgFunc(sb.String)
 				}
@@ -286,7 +286,7 @@ func ensureVulnxClientInitialized(_ *cobra.Command) error {
 				if err == nil {
 					var sb strings.Builder
 					sb.WriteString("--- HTTP RESPONSE ---\n")
-					sb.Write(dump)
+					sb.WriteString(redactSensitiveHeaders(dump))
 					sb.WriteString("---------------------\n")
 					gologger.Debug().MsgFunc(sb.String)
 				}
@@ -1042,4 +1042,11 @@ func GetUpdateCallback() func() {
 		showBanner()
 		updateutils.GetUpdateToolCallback("vulnx", Version)()
 	}
+}
+
+// redactSensitiveHeaders masks credential headers (e.g. the API key) in an
+// HTTP dump so secrets are not leaked into debug output / CI logs.
+func redactSensitiveHeaders(dump []byte) string {
+	re := regexp.MustCompile(`(?i)(X-PDCP-Key:\s*).*`)
+	return re.ReplaceAllString(string(dump), "${1}[REDACTED]")
 }
