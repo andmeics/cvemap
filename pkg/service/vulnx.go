@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"regexp"
 
 	"github.com/projectdiscovery/vulnx/v2/pkg/types"
 	"github.com/projectdiscovery/gologger"
@@ -205,7 +206,7 @@ func (c *Vulnx) doRequest(req *retryablehttp.Request) (*http.Response, error) {
 		if err != nil {
 			gologger.Fatal().Msgf("Error dumping request: %s\n", err)
 		}
-		gologger.Print().Msgf("%s\n", string(dump))
+		gologger.Print().Msgf("%s\n", redactSensitiveHeaders(dump))
 	}
 	resp, err := c.client.Do(req)
 
@@ -222,4 +223,11 @@ func (c *Vulnx) doRequest(req *retryablehttp.Request) (*http.Response, error) {
 		}
 	}
 	return resp, err
+}
+
+// redactSensitiveHeaders masks credential headers (e.g. the API key) in an
+// HTTP dump so secrets are not leaked into debug output.
+func redactSensitiveHeaders(dump []byte) string {
+	re := regexp.MustCompile(`(?i)(X-PDCP-Key:\s*).*`)
+	return re.ReplaceAllString(string(dump), "${1}[REDACTED]")
 }
