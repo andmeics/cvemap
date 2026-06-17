@@ -206,7 +206,7 @@ func (c *Vulnx) doRequest(req *retryablehttp.Request) (*http.Response, error) {
 		if err != nil {
 			gologger.Fatal().Msgf("Error dumping request: %s\n", err)
 		}
-		gologger.Print().Msgf("%s\n", redactSensitiveHeaders(dump))
+		gologger.Debug().Msgf("%s\n", redactSensitiveHeaders(dump))
 	}
 	resp, err := c.client.Do(req)
 
