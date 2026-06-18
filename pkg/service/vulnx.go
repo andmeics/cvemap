@@ -228,6 +228,6 @@ func (c *Vulnx) doRequest(req *retryablehttp.Request) (*http.Response, error) {
 // redactSensitiveHeaders masks credential headers (e.g. the API key) in an
 // HTTP dump so secrets are not leaked into debug output.
 func redactSensitiveHeaders(dump []byte) string {
-	re := regexp.MustCompile(`(?i)(X-PDCP-Key:\s*).*`)
+	re := regexp.MustCompile(`(?i)(` + regexp.QuoteMeta(xPDCPHeaderKey) + `:\s*).*`)
 	return re.ReplaceAllString(string(dump), "${1}[REDACTED]")
 }
