@@ -1044,9 +1044,8 @@ func GetUpdateCallback() func() {
 	}
 }
 
-// redactSensitiveHeaders masks credential headers (e.g. the API key) in an
-// HTTP dump so secrets are not leaked into debug output / CI logs.
+var sensitiveHeaderRe = regexp.MustCompile(`(?i)(X-Api-Key:\s*).*`)
+
 func redactSensitiveHeaders(dump []byte) string {
-	re := regexp.MustCompile(`(?i)(X-PDCP-Key:\s*).*`)
-	return re.ReplaceAllString(string(dump), "${1}[REDACTED]")
+	return sensitiveHeaderRe.ReplaceAllString(string(dump), "${1}[REDACTED]")
 }
