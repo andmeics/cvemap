@@ -274,7 +274,7 @@ func ensureVulnxClientInitialized(_ *cobra.Command) error {
 				if err == nil {
 					var sb strings.Builder
 					sb.WriteString("--- HTTP REQUEST ---\n")
-					sb.Write(dump)
+					sb.WriteString(redactSensitiveHeaders(dump))
 					sb.WriteString("--------------------\n")
 					gologger.Debug().MsgFunc(sb.String)
 				}
@@ -286,7 +286,7 @@ func ensureVulnxClientInitialized(_ *cobra.Command) error {
 				if err == nil {
 					var sb strings.Builder
 					sb.WriteString("--- HTTP RESPONSE ---\n")
-					sb.Write(dump)
+					sb.WriteString(redactSensitiveHeaders(dump))
 					sb.WriteString("---------------------\n")
 					gologger.Debug().MsgFunc(sb.String)
 				}
@@ -1042,4 +1042,10 @@ func GetUpdateCallback() func() {
 		showBanner()
 		updateutils.GetUpdateToolCallback("vulnx", Version)()
 	}
+}
+
+var sensitiveHeaderRe = regexp.MustCompile(`(?i)(X-Api-Key:\s*).*`)
+
+func redactSensitiveHeaders(dump []byte) string {
+	return sensitiveHeaderRe.ReplaceAllString(string(dump), "${1}[REDACTED]")
 }
