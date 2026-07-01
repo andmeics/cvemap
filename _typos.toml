@@ -1,3 +1,5 @@
 [default.extend-words]
 # from external goflags package
 Allowd = "Allowd"
+# shell variable name in USAGE.md examples
+criticals = "criticals"
