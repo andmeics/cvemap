@@ -194,41 +194,28 @@ vulnx search "is_oss:true && severity:high && cve_created_at:2024"
 
 ## Advanced Filter Usage
 
-### Exclusion Filters
+### Product and Vendor Filtering
 
 ```bash
-# Exclude specific products while searching
-vulnx search --exclude-product apache,nginx "web server"
-vulnx search --exclude-vendor microsoft,oracle "database"
-vulnx search --exclude-severity low,medium "remote"
-
-```
-
-### CPE-Based Filtering
-
-```bash
-# Precise product matching with CPE
-vulnx search --cpe "cpe:2.3:a:apache:*" "cve_created_at:2024"
-vulnx search --cpe "cpe:2.3:o:microsoft:windows:*" "severity:critical"
-vulnx search --cpe "cpe:2.3:a:*:wordpress:*" "is_remote:true"
-
-# Combine CPE with other filters
-vulnx search --cpe "cpe:2.3:a:apache:tomcat:*" --severity critical,high
+# Filter by product or vendor (matches the affected_products fields)
+vulnx search --product apache,nginx "cve_created_at:2024"
+vulnx search --vendor microsoft,oracle "severity:critical"
+vulnx search --vendor apache --severity critical,high
 ```
 
 ### Status and Age Filtering
 
 ```bash
 # Vulnerability status filtering
-vulnx search --vstatus confirmed "severity:critical"
-vulnx search --vstatus new "cve_created_at:2024"
-vulnx search --vstatus modified "is_kev:true"
+vulnx search --vuln-status confirmed "severity:critical"
+vulnx search --vuln-status new "cve_created_at:2024"
+vulnx search --vuln-status modified "is_kev:true"
 
 # Age-based filtering with operators
 vulnx search --vuln-age "<7" "severity:critical"     # Last week
 vulnx search --vuln-age ">365" "is_poc:true"         # Older than a year
 vulnx search --vuln-age "30" "is_template:true"      # Exactly 30 days
-vulnx search --vuln-age "<30" --kev-only             # Recent KEV vulns
+vulnx search --vuln-age "<30" --kev                  # Recent KEV vulns
 ```
 
 ### Advanced Search Options
@@ -250,16 +237,15 @@ vulnx search --sort-asc cve_created_at "is_kev:true"
 ```bash
 # Multi-dimensional filtering
 vulnx search --product apache,nginx --severity critical,high --vuln-age "<30"
-vulnx search --vendor microsoft,oracle --exclude-severity low --kev-only
-vulnx search --cpe "cpe:2.3:a:*:*:*" --exclude-product apache,tomcat --remote-exploit
+vulnx search --vendor microsoft,oracle --severity critical,high --kev
+vulnx search --severity critical --remote-exploit --poc
 
 # Complex filtering combinations
 vulnx search \
   --product apache,nginx,mysql \
-  --exclude-vendor microsoft,oracle \
   --severity critical,high \
   --vuln-age "<14" \
-  --kev-only \
+  --kev \
   --template
 ```
 
@@ -394,8 +380,8 @@ vulnx search "cve_created_at:$DATE" --json --output "vulns_$DATE.json"
 vulnx search "affected_products.product:docker" --json --silent | \
   jq '.count' | xargs -I {} echo "Found {} Docker vulnerabilities"
 
-# Baseline security checks
-vulnx search "(apache || nginx) && severity:critical" --count-only
+# Baseline security checks (total match count)
+vulnx search "(apache || nginx) && severity:critical" --json --silent | jq '.total'
 ```
 
 ### Security Monitoring Integration

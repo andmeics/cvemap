@@ -611,28 +611,6 @@ func init() { // Register flags and add command to rootCmd
 	searchCmd.Flags().StringSliceVar(&filterVendor, "vendor", nil, "filter by vendor (comma-separated)")
 	searchCmd.Flags().StringSliceVarP(&filterSeverity, "severity", "s", nil, "filter by severity (comma-separated)")
 
-	// NOTE: The following filters are disabled because they don't work with the search API:
-	// - exclude-product: NOT operator not supported
-	// - exclude-vendor: NOT operator not supported
-	// - exclude-severity: NOT operator not supported
-	// - cpe: CPE field not available in search API
-	// - assignee: Field exists in API but search queries don't return results
-	// - cwe: weaknesses.cwe_id field doesn't return results in search queries
-	//
-	// Working filters have been verified against the /v2/vulnerability/filters endpoint and tested.
-
-	/*
-		searchCmd.Flags().StringSliceVar(&filterExcludeProduct, "exclude-product", nil, "Exclude products (comma-separated)")
-		searchCmd.Flags().StringSliceVar(&filterExcludeVendor, "exclude-vendor", nil, "Exclude vendors (comma-separated)")
-		searchCmd.Flags().StringSliceVar(&filterExcludeSeverity, "exclude-severity", nil, "Exclude severities (comma-separated)")
-		searchCmd.Flags().StringSliceVarP(&filterAssignee, "assignee", "a", nil, "Filter by assignee (comma-separated)")
-
-		// Single value filters
-		searchCmd.Flags().StringVarP(&filterCPE, "cpe", "c", "", "Filter by CPE string")
-	*/
-	// NOTE: Assignee filter commented out as search queries don't return results even though field exists in API
-	// searchCmd.Flags().StringSliceVarP(&filterAssignee, "assignee", "a", nil, "Filter by assignee (comma-separated)")
-
 	searchCmd.Flags().StringVar(&filterVulnStatus, "vuln-status", "", "filter by vulnerability status (new, confirmed, unconfirmed, modified, rejected, unknown)")
 	searchCmd.Flags().StringVarP(&filterVulnAge, "vuln-age", "a", "", "filter by vulnerability age (supports <, >, exact: e.g., '5', '<10', '>30')")
 
@@ -656,9 +634,6 @@ func init() { // Register flags and add command to rootCmd
 	searchCmd.Flags().StringVar(&filterCvssScore, "cvss-score", "", "filter by cvss score (supports <, >, <=, >=, exact: e.g., '7.5', '>8.0', '<=6.0')")
 	searchCmd.Flags().StringVar(&filterEpssScore, "epss-score", "", "filter by epss score (supports <, >, <=, >=, exact: e.g., '0.5', '>0.8', '<=0.3')")
 
-	// Additional filters
-	// NOTE: CWE filter disabled - weaknesses.cwe_id field doesn't return results in search queries
-	// searchCmd.Flags().StringSliceVar(&filterCwe, "cwe", nil, "Filter by CWE ID (comma-separated)")
 	searchCmd.Flags().StringSliceVar(&filterTags, "tags", nil, "filter by tags (comma-separated)")
 	searchCmd.Flags().StringSliceVar(&filterVulnType, "vuln-type", nil, "filter by vulnerability type (e.g., sql_injection, reflected_xss, stored_xss, command_injection)")
 
